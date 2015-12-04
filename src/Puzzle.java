@@ -1,17 +1,19 @@
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class Puzzle {
 	
+	// string holding letters, that cannot have a digit value of 0.
 	private static String cannotBeZero;
 
    /** Solve the word puzzle.
     * @param args three words (addend1, addend2 and sum)
     */
    public static void main (String[] args) {
-	   String[] test = {"AAA", "BBB", "CCC"};
+//	   String[] test = {"AAA", "BBB", "CCC"};
 //	   String[] test = {"SEND", "MORE", "MONEY"};
-	   solvePuzzle (test);
-//	   solvePuzzle (args);
+//	   solvePuzzle (test);
+	   solvePuzzle (args);
    }
    
    /**
@@ -28,7 +30,7 @@ public class Puzzle {
 	   
 	   String uniqueLetters = getUniqueLetters (input);
 	   String uniqueWithFiller = setFiller (uniqueLetters);
-	   ArrayList<String> permutations = getPermutations (uniqueWithFiller);
+	   HashSet<String> permutations = getPermutations (uniqueWithFiller);
 	   
 	   for (String permutation : permutations) {
 		   tryDigits (permutation, input, solutions);
@@ -174,8 +176,8 @@ public class Puzzle {
     * @return Array-list containing permutations of the string.
     */
    // http://introcs.cs.princeton.edu/java/23recursion/Permutations.java.html
-   private static ArrayList<String> getPermutations (String input) {
-	   ArrayList<String> permutations = new ArrayList<String>();
+   private static HashSet<String> getPermutations (String input) {
+	   HashSet<String> permutations = new HashSet<String>();
 	   fillPermutationArray ("", input, permutations);
 
 	   return permutations;
@@ -185,7 +187,7 @@ public class Puzzle {
     * Adds permutations to an array-list. A few permutations are omitted.
     * @param permutations reference to array-list containing permutations.
     */
-   private static void fillPermutationArray (String prefix, String input, ArrayList<String> permutations) {
+   private static void fillPermutationArray (String prefix, String input, HashSet<String> permutations) {
 	   int l = input.length();
 	   
 	   if (l == 0) {
