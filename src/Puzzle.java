@@ -8,7 +8,7 @@ public class Puzzle {
     * @param args three words (addend1, addend2 and sum)
     */
    public static void main (String[] args) {
-	   String[] test = {"A", "B", "C"};
+	   String[] test = {"SEND", "MORE", "MONEY"};
 //	   String s = "CBCHDSF";
 //	   validate(test);
 
@@ -19,40 +19,60 @@ public class Puzzle {
 //	   System.out.println(!cannotBeZero.contains(String.valueOf(s.charAt(0))));
 	   
 //	   ArrayList<String> permutations = getPermutations (getUniqueLetters (test));
-	   String s = "0123456ABC";
+	   String s = "0ABC456789";
 	   String a = "ABC";
 	   
-	   for (int i = 0; i < test.length; i++) {
-
-	   }
+//	   tryDigits(s, test);
+	   solvePuzzle (test);
 	   
-	   char[] array = a.toCharArray();
-	   
-	   for (int i = 0; i < array.length; i++) {
-		   array[i] = (char) (s.indexOf(array[i]) + '0');
-	   }
-	   a = String.valueOf(array);
-	   
-	   System.out.println(a);
    }
    
    public static void solvePuzzle (String[] input) {
 	   validate (input);
 	   setExceptions (input);
-	   
-	   String[] replacements = {};
-	   ArrayList<String> results = new ArrayList<String>();
+
+	   ArrayList<String[]> results = new ArrayList<String[]>();
 	   
 	   String uniqueLetters = getUniqueLetters (input);
-	   String uniqueLettersWithFiller = getUniquesWithFiller(uniqueLetters);
+	   String uniqueLettersWithFiller = getUniquesWithFiller (uniqueLetters);
 	   ArrayList<String> permutations = getPermutations (uniqueLettersWithFiller);
 	   
-	   for (String s : permutations) {
-		   for (int i = 0; i < input.length; i++) {
-			   for (int j = 0; j < input[i].length(); j++) {
-//				    = input[i].replace(input[i].charAt(j), (char) s.indexOf(input[i].charAt(j)));
-			   }
-		   }		   
+	   for (String permutation : permutations) {
+		   tryDigits (permutation, input, results);
+	   }
+	   
+	   if (results.size() == 0) {
+		   throw new RuntimeException ("Cannot solve puzzle: " + argsToString (input));
+	   } else {
+		   System.out.println("Puzzle: " + argsToString (input));
+		   System.out.println("Number of solutions: " + results.size());
+		   System.out.println("First solution: " + argsToString (results.get(0)));
+	   }
+   }
+   
+   /**
+    * 
+    * @param permutation
+    * @param input
+    * @return
+    */
+   private static void tryDigits (String permutation, String[] input, ArrayList<String[]> results) {
+	   String[] args = input.clone();
+	   
+	   for (int i = 0; i < args.length; i++) {
+		   char[] array = args[i].toCharArray();
+		   
+		   for (int j = 0; j < array.length; j++) {
+			   array[j] = (char) (permutation.indexOf (array[j]) + '0');
+		   }
+		   
+		   args[i] = String.valueOf (array);
+	   }
+	   
+	   if ((Long.parseLong (args[0]) + Long.parseLong (args[1])) == Long.parseLong(args[2])) {
+		   results.add(args);
+	   } else {
+		   return;
 	   }
    }
 
@@ -149,8 +169,7 @@ public class Puzzle {
    private static ArrayList<String> getPermutations (String input) {
 	   ArrayList<String> permutations = new ArrayList<String>();
 	   fillPermutationArray ("", input, permutations);
-	   
-	   System.out.println(permutations.size());
+
 	   return permutations;
    }
    
@@ -177,11 +196,9 @@ public class Puzzle {
    private static String argsToString(String[] input) {
 	   StringBuffer sb = new StringBuffer();
 	   
-	   for (String s : input) {
-		   sb.append(s + " ");
-	   }
+	   sb.append(input[0] + " + " + input[1] + " = " + input[2]);
 	   
-	   return sb.toString().trim();
+	   return sb.toString();
    }
 }
 
