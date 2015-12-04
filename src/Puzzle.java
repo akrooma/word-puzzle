@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 
 public class Puzzle {
@@ -10,9 +11,6 @@ public class Puzzle {
     * @param args three words (addend1, addend2 and sum)
     */
    public static void main (String[] args) {
-//	   String[] test = {"AAA", "BBB", "CCC"};
-//	   String[] test = {"SEND", "MORE", "MONEY"};
-//	   solvePuzzle (test);
 	   solvePuzzle (args);
    }
    
@@ -41,35 +39,32 @@ public class Puzzle {
 	   } else {
 		   System.out.println("Puzzle: " + argsToString (input));
 		   System.out.println("Number of solutions: " + solutions.size());
-		   System.out.println("First solution: " + argsToString (solutions.get (0)));
-		   printMap (uniqueLetters, argsToString (input), argsToString (solutions.get (0)));
+		   System.out.println("A solution: " + argsToString (solutions.get (0)));
+		   printMap (uniqueLetters, solutions.get (0) [3]);
 	   }
    }
    
-   private static void printMap (String uniqueLetters, String puzzle, String digits) {
-	   ArrayList<Integer> indexes = new ArrayList<Integer>();
-	   
+   private static void printMap (String uniqueLetters, String map) {
 	   for (int i = 0; i < uniqueLetters.length(); i++) {
-		   indexes.add(puzzle.indexOf(uniqueLetters.charAt(i)));
+		   System.out.println(uniqueLetters.charAt(i) +  " -- " + map.indexOf(uniqueLetters.charAt(i)));
 	   }
 	   
-	   for (int i = 0; i < indexes.size(); i++) {
-		   System.out.println(uniqueLetters.charAt(i) + " -- " + digits.charAt(indexes.get(i)));
-	   }
+	   System.out.println();
    }
    
    /**
     * Tries to solve the puzzle with given letter - digit map. If the map checks out,
-    * digit version of the puzzle is added to the solution set of the puzzle.
+    * digit version of the puzzle + the map is added to the solution set of the puzzle.
     * @param permutation letter - digit map.
     * @param input array containing addend1, addendd2, sum of puzzle.
     * @param solutions reference to array containing solutions.
     */
    private static void tryDigits (String permutation, String[] input, ArrayList<String[]> solutions) {
-	   String[] args = input.clone();
+	   // args0 to args2 is the digit version of the puzzle. args3 is the map.
+	   String[] args = Arrays.copyOf(input, input.length + 1);
 	   
-	   // replaces the letters with the corresponding digits.
-	   for (int i = 0; i < args.length; i++) {
+	   // replaces the arguments' letters with the corresponding digits.
+	   for (int i = 0; i < args.length - 1; i++) {
 		   char[] array = args[i].toCharArray();
 		   
 		   for (int j = 0; j < array.length; j++) {
@@ -80,7 +75,8 @@ public class Puzzle {
 	   }
 	   
 	   if ((Long.parseLong (args[0]) + Long.parseLong (args[1])) == Long.parseLong (args[2])) {
-			   solutions.add (args);
+		   args[3] = permutation;
+		   solutions.add (args);
 	   } else {
 		   return;
 	   }
@@ -92,7 +88,7 @@ public class Puzzle {
    private static void validate (String[] input) {
 	   // checks if the correct amount of arguments were given.
 	   if (input.length != 3) {
-		   throw new RuntimeException ("Puzzle uses only 3 words: " + argsToString (input));
+		   throw new RuntimeException ("Puzzle uses 3 words: " + argsToString (input));
 	   }
 	   
 	   // checks if the strings are only upper-case letters.
@@ -210,8 +206,14 @@ public class Puzzle {
    private static String argsToString (String[] input) {
 	   StringBuffer sb = new StringBuffer();
 	   
-	   sb.append (input[0] + " + " + input[1] + " = " + input[2]);
+	   if (input.length >= 3) {
+		   sb.append (input[0] + " + " + input[1] + " = " + input[2]);
+	   } else {
+		   for (String string : input) {
+			   sb.append(string + " ");
+		   }
+	   }
 	   
-	   return sb.toString();
+	   return sb.toString().trim();
    }
 }
